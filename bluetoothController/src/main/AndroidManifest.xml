@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- работа с блютуз -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- подключение устройств -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" /> <!-- поиск БТ устройств -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- скан локации -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- скан локации -->
+
+</manifest>
