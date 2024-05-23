@@ -6,7 +6,7 @@ import android.util.Log
 import java.io.IOException
 import java.util.*
 
-class ConnectThread(device: BluetoothDevice, private val listener: Controller.Listener) : Thread() {
+class ConnectThread(device: BluetoothDevice, private val listener: BluetoothController.Listener) : Thread() {
     private val uid = "00001101-0000-1000-8000-00805F9B34FB"
     private var socket: BluetoothSocket? = null
 

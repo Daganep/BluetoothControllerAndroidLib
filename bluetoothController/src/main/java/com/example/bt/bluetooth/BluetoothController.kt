@@ -2,7 +2,7 @@ package com.example.bt.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 
-class Controller(private val adapter: BluetoothAdapter) {
+class BluetoothController(private val adapter: BluetoothAdapter) {
 
     private var connectThread: ConnectThread? = null
 
