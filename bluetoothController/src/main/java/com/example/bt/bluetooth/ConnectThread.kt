@@ -2,7 +2,6 @@ package com.example.bt.bluetooth
 
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
-import android.util.Log
 import java.io.IOException
 import java.util.*
 
@@ -13,14 +12,16 @@ class ConnectThread(device: BluetoothDevice, private val listener: BluetoothCont
     init {
         try {
             socket = device.createRfcommSocketToServiceRecord(UUID.fromString(uid))
-        } catch (e: IOException) {
-            val errorMessage = "ERROR! CATCH IOException in ConnectThread init"
-            listener.onError(errorMessage)
-            Log.d("MyFilter", errorMessage)
-        } catch (e: SecurityException) {
-            val errorMessage = "ERROR! CATCH SecurityException in ConnectThread init"
-            listener.onError(errorMessage)
-            Log.d("MyFilter", errorMessage)
+        } catch (exception: IOException) {
+            sendError(
+                exception = exception.message,
+                errorMessage = "Create socket ERROR! CATCH IOException"
+            )
+        } catch (exception: SecurityException) {
+            sendError(
+                exception = exception.message,
+                errorMessage = "Create socket ERROR! CATCH SecurityException"
+            )
         }
     }
 
@@ -29,30 +30,33 @@ class ConnectThread(device: BluetoothDevice, private val listener: BluetoothCont
             socket?.connect()
             listener.onConnected()
             readMessage()
-            Log.d("MyFilter", "Connected!")
-        } catch (e: IOException) {
-            val errorMessage = "ERROR! CATCH IOException in ConnectThread run"
-            listener.onError(errorMessage)
-            Log.d("MyFilter", errorMessage)
-        } catch (e: SecurityException) {
-            val errorMessage = "ERROR! CATCH SecurityException in ConnectThread run"
-            listener.onError(errorMessage)
-            Log.d("MyFilter", errorMessage)
+        } catch (exception: IOException) {
+            sendError(
+                exception = exception.message,
+                errorMessage = "Connecting ERROR! CATCH IOException"
+            )
+        } catch (exception: SecurityException) {
+            sendError(
+                exception = exception.message,
+                errorMessage = "Connecting ERROR! CATCH SecurityException"
+            )
         }
     }
 
     private fun readMessage() {
-        val buffer = ByteArray(256)
-        while (true) {
+        val buffer = ByteArray(BYTE_ARRAY_SIZE)
+        var isReadyToRead = true
+        while (isReadyToRead) {
             try {
                 val messageLength = socket?.inputStream?.read(buffer)
                 val message = String(buffer, 0, messageLength ?: 0)
                 listener.onMessageReceived(message)
-            } catch (e: IOException) {
-                val errorMessage = "ERROR! CATCH IOException in ConnectThread readMessage"
-                listener.onError(errorMessage)
-                Log.d("MyFilter", errorMessage)
-                break
+            } catch (exception: IOException) {
+                isReadyToRead = false
+                sendError(
+                    exception = exception.message,
+                    errorMessage = "Read message ERROR! CATCH IOException"
+                )
             }
         }
     }
@@ -60,10 +64,11 @@ class ConnectThread(device: BluetoothDevice, private val listener: BluetoothCont
     fun sendMessage(message: String) {
         try {
             socket?.outputStream?.write(message.toByteArray())
-        } catch (e: IOException) {
-            val errorMessage = "ERROR! CATCH IOException in ConnectThread sendMessage"
-            listener.onError(errorMessage)
-            Log.d("MyFilter", errorMessage)
+        } catch (exception: IOException) {
+            sendError(
+                exception = exception.message,
+                errorMessage = "Send message ERROR! CATCH IOException"
+            )
         }
     }
 
@@ -71,10 +76,23 @@ class ConnectThread(device: BluetoothDevice, private val listener: BluetoothCont
         try {
             socket?.close()
             listener.onDisconnected()
-        } catch (e: IOException) {
-            val errorMessage = "ERROR! CATCH IOException in ConnectThread closeConnection"
-            listener.onError(errorMessage)
-            Log.d("MyFilter", errorMessage)
+        } catch (exception: IOException) {
+            sendError(
+                exception = exception.message,
+                errorMessage = "Socket close ERROR! CATCH IOException"
+            )
         }
+    }
+
+    private fun sendError(exception: String?, errorMessage: String) {
+        if (exception.isNullOrEmpty()) {
+            listener.onError(errorMessage)
+        } else {
+            listener.onError(exception)
+        }
+    }
+
+    companion object {
+        private const val BYTE_ARRAY_SIZE: Int = 256
     }
 }
