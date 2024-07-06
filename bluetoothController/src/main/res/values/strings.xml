@@ -6,4 +6,6 @@
     <string name="back_button_text">На предыдущий экран</string>
     <string name="permission_not_granted_paired_list">Разрешение на отображение устройств не получено!</string>
     <string name="name_undefined">Имя не определено</string>
+    <string name="log_device_name">Имя:</string>
+    <string name="log_device_mac_address">мак-адрес:</string>
 </resources>

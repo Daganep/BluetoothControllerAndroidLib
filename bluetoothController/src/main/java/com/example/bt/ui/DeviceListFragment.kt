@@ -5,25 +5,20 @@ import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bt.R
 import com.example.bt.databinding.FragmentListBinding
@@ -162,7 +157,7 @@ class DeviceListFragment : Fragment(), DeviceAdapter.PairedDeviceListener {
                 bluetoothAdapter?.startDiscovery()
             }
         } catch (e: SecurityException) {
-            Log.d("MyFilter", "ERROR! CATCH SecurityException")
+            Log.d(TAG, "Search device ERROR! CATCH SecurityException")
         }
     }
 
@@ -179,7 +174,10 @@ class DeviceListFragment : Fragment(), DeviceAdapter.PairedDeviceListener {
             bluetoothDevices.forEach {
                 val isChecked = it.address == sharedPrefs?.getString(CONNECTED_DEVICE_MAC_ADDRESS, "")
                 deviceList.add(DeviceItem(it, isChecked, getDeviceName(it.name)))
-                Log.d("MyFilter", "device. name: ${it.name} address: ${it.address} bondState: ${it.bondState}")
+                Log.d(TAG, getString(R.string.paired_devices))
+                val pairedDevice = "${getString(R.string.log_device_name)} ${it.name} " +
+                    "${getString(R.string.log_device_mac_address)} ${it.address}"
+                Log.d(TAG, pairedDevice)
             }
             if (isBluetoothOn && deviceList.isNotEmpty()) {
                 isPairedListEmpty(false)
@@ -215,14 +213,15 @@ class DeviceListFragment : Fragment(), DeviceAdapter.PairedDeviceListener {
                         val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
                         val foundDevicesList = mutableSetOf<DeviceItem>()
                         foundDevicesList.addAll(adapterSearch.currentList)
-                        Log.d("MyFilter", "getDeviceName: ${getDeviceName( device?.name)}")
                         device?.let { foundDevicesList.add(DeviceItem(it, false, getDeviceName(it.name))) }
                         adapterSearch.submitList(foundDevicesList.toList())
                         binding.searchDevicesList.isVisible = foundDevicesList.isNotEmpty()
                         binding.emptySearchDevices.isVisible = foundDevicesList.isEmpty()
-                        Log.d("MyFilter", "device. name: ${device?.name} address: ${device?.address}")
+                        val foundDevice = "${getString(R.string.log_device_name)} ${device?.name} " +
+                            "${getString(R.string.log_device_mac_address)} ${device?.address}"
+                        Log.d(TAG, foundDevice)
                     } catch (e: SecurityException) {
-                        Log.d("MyFilter", "ERROR! CATCH SecurityException")
+                        Log.d(TAG, "Finding device ERROR! CATCH SecurityException")
                     }
                 }
                 BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
@@ -281,5 +280,7 @@ class DeviceListFragment : Fragment(), DeviceAdapter.PairedDeviceListener {
         fun createFragment(extras: Bundle? = null) = DeviceListFragment().apply {
             arguments = extras ?: Bundle()
         }
+
+        private const val TAG = "BlueToothController"
     }
 }

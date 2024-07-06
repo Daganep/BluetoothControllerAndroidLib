@@ -5,13 +5,16 @@ import android.bluetooth.BluetoothSocket
 import java.io.IOException
 import java.util.*
 
-class ConnectThread(device: BluetoothDevice, private val listener: BluetoothController.Listener) : Thread() {
-    private val uid = "00001101-0000-1000-8000-00805F9B34FB"
+class ConnectThread(
+    device: BluetoothDevice,
+    private val listener: BluetoothController.Listener
+) : Thread() {
+
     private var socket: BluetoothSocket? = null
 
     init {
         try {
-            socket = device.createRfcommSocketToServiceRecord(UUID.fromString(uid))
+            socket = device.createRfcommSocketToServiceRecord(UUID.fromString(UID))
         } catch (exception: IOException) {
             sendError(
                 exception = exception.message,
@@ -94,5 +97,6 @@ class ConnectThread(device: BluetoothDevice, private val listener: BluetoothCont
 
     companion object {
         private const val BYTE_ARRAY_SIZE: Int = 256
+        private const val UID: String = "00001101-0000-1000-8000-00805F9B34FB"
     }
 }
