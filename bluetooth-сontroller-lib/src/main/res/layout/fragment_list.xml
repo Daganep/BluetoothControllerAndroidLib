@@ -25,7 +25,8 @@
         android:layout_marginTop="8dp"
         android:src="@drawable/icon_return_arrow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/paired_devices"

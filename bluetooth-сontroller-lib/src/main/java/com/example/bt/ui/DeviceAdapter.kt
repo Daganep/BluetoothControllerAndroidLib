@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bt.R
 import com.example.bt.databinding.ItemDeviceBinding
 import com.example.bt.model.DeviceItem
-import com.google.android.material.snackbar.Snackbar
 
 class DeviceAdapter(
     private val listener: PairedDeviceListener,
