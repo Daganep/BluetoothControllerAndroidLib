@@ -1,24 +1,19 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
 }
 
 android {
-    namespace 'com.example.bluetoothmodule'
-    compileSdk 33
+    namespace 'com.example.bt'
+    compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.bluetoothmodule"
         minSdk 21
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildFeatures {
-        viewBinding = true
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -34,6 +29,22 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.Daganep'
+                artifactId = 'bluetoothController'
+                version = '1.0.0'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -45,5 +56,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation project(path: ':bluetooth-controller-lib')
 }
